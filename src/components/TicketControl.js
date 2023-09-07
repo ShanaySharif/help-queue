@@ -9,6 +9,7 @@ class TicketControl extends React.Component {
         this.state = {
           formVisibleOnPage: false,
           mainTicketList: []
+          // selectedTicket: null
         };
         this.handleClick = this.handleClick.bind(this); //new code here
     }
