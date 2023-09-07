@@ -4,7 +4,7 @@ import { v4 } from 'uuid'; // new code
 
 
 function NewTicketForm(props){//add props as a perameter.
-
+// console.log(props)
   function handleNewTicketFormSubmission(event) {
     event.preventDefault();
     props.onNewTicketCreation({
@@ -38,7 +38,4 @@ function NewTicketForm(props){//add props as a perameter.
     </React.Fragment>
   );   
 }
-
-
-
 export default NewTicketForm;
