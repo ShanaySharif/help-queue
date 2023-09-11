@@ -1,4 +1,5 @@
 const reducer = (state = {}, action) => {
+    
     const { names, location, issue, id } = action;
     switch (action.type) {
     case 'ADD_TICKET':
@@ -10,6 +11,10 @@ const reducer = (state = {}, action) => {
           id: id
         }
       });
+    case 'DELETE_TICKET':
+      let newState = { ...state };
+      delete newState[id];
+      return newState;
     default:
       return state;
     }
