@@ -1,10 +1,10 @@
 import React from "react";
-import PropTypes from "prop-types"
-import { v4 } from 'uuid'; // new code
+import { v4 } from 'uuid';
+import PropTypes from "prop-types"; 
+import ReusableForm from "./ReusableForm";
 
+function NewTicketForm(props){
 
-function NewTicketForm(props){//add props as a perameter.
-// console.log(props)
   function handleNewTicketFormSubmission(event) {
     event.preventDefault();
     props.onNewTicketCreation({
@@ -15,27 +15,17 @@ function NewTicketForm(props){//add props as a perameter.
     });
   }
 
-  NewTicketForm.propTypes = {
-    onNewTicketCreation: PropTypes.func
-  };
-
   return (
     <React.Fragment>
-      <form onSubmit={handleNewTicketFormSubmission}>
-        <input
-          type='text'
-          name='names'
-          placeholder='Pair Names' />
-        <input
-          type='text'
-          name='location'
-          placeholder='Location' />
-        <textarea
-          name='issue'
-          placeholder='Describe your issue.' />
-        <button type='submit'>Help!</button>
-      </form>
+      <ReusableForm 
+        formSubmissionHandler={handleNewTicketFormSubmission}
+        buttonText="Help!" />
     </React.Fragment>
-  );   
+  );
 }
+
+NewTicketForm.propTypes = {
+  onNewTicketCreation: PropTypes.func
+};
+
 export default NewTicketForm;
