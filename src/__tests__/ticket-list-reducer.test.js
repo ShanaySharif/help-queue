@@ -1,5 +1,5 @@
 
-import ticketListReducer from '../../reducers/ticket-list-reducer';
+import ticketListReducer from './reducers/ticket-list-reducer';
 
 describe('ticketListReducer', () => {
 
