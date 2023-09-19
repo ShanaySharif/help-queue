@@ -1,6 +1,6 @@
 import React from "react";
 // import ticketsImage from "./../img/tickets.png";
-
+<div>  </div>
 function Header(){
   return (
     <React.Fragment>
@@ -11,3 +11,5 @@ function Header(){
 }
 
 export default Header;
+
+
