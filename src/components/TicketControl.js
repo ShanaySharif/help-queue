@@ -1,11 +1,12 @@
 import React, { useEffect,useState } from "react";
+import { db, auth } from './firebase.js'
+
 
 // import { connect } from "react-redux";
 import NewTicketForm from "./NewTicketForm";
 import TicketList from "./TicketList";
 import EditTicketForm from "./EditTicketForm";
 import TicketDetail from "./TicketDetail";
-import db from './firebase.js';
 // import { collection, addDoc } from "firebase/firestore";
 import { collection, addDoc,doc,updateDoc, onSnapshot,deleteDoc } from "firebase/firestore";
 
@@ -84,6 +85,18 @@ function TicketControl() {
     // new code!
     setSelectedTicket(selection);
   };
+  if (auth.currentUser == null) {
+    return (
+      <React.Fragment>
+        <h1>You must be signed in to access the queue.</h1>
+      </React.Fragment>
+    )
+  } else if (auth.currentUser != null) {
+  
+
+
+
+
   let currentlyVisibleState = null;
   let buttonText = null;
 
@@ -132,6 +145,7 @@ function TicketControl() {
       {error ? null : <button onClick={handleClick}>{buttonText}</button>}
     </React.Fragment>
   );
+}
 }
 // TicketControl.propTypes = {
 //   mainTicketList: PropTypes.object,
