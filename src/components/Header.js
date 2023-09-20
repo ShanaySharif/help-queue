@@ -1,21 +1,43 @@
 import React from "react";
 import { Link } from "react-router-dom";
-// import ticketsImage from "./../img/tickets.png";
+import styled from 'styled-components';
 
+const StyledWrapper = styled.section`
+  background-color: lightblue;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+`;
 
-function Header(){
+const NavList = styled.ul`
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  gap: 20px;
+`;
+
+const NavItem = styled.li`
+  text-transform: uppercase;
+  font-weight: bold;
+`;
+
+function Header() {
   return (
-    <React.Fragment>
-      <h1> Help Queue</h1>
-      <ul>
-        <li>
-          <Link to="/">Home</Link>
-        </li>
-        <li>
-          <Link to="/sign-in">Sign In</Link>
-        </li>
-      </ul>
-    </React.Fragment>
+    <StyledWrapper>
+      <React.Fragment>
+        <h1>Help Queue</h1>
+        <NavList>
+          <NavItem>
+            <Link to="/">Home</Link>
+          </NavItem>
+          <NavItem>
+            <Link to="/sign-in">Sign In</Link>
+          </NavItem>
+        </NavList>
+      </React.Fragment>
+    </StyledWrapper>
   );
 }
 

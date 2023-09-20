@@ -1,12 +1,69 @@
-// import React from "react";
+import React, { useState } from "react";
 import { auth } from "./firebase.js";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";import React, { useState } from "react";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "firebase/auth";
+import styled from 'styled-components';
 
+const StyledSignInContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 400px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f7f7f7;
+  border-radius: 10px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+`;
 
-function SignIn(){  
-    const [signUpSuccess, setSignUpSuccess] = useState(null);
-    const [signInSuccess, setSignInSuccess] = useState(null);
-    const [signOutSuccess, setSignOutSuccess] = useState(null);
+const StyledTitle = styled.h1`
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+`;
+
+const StyledForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+`;
+
+const StyledInput = styled.input`
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+`;
+
+const StyledButton = styled.button`
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease-in-out;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
+
+const StyledMessage = styled.p`
+  color: green;
+  font-weight: bold;
+`;
+
+const StyledErrorMessage = styled.p`
+  color: red;
+  font-weight: bold;
+`;
+
+function SignIn() {
+  const [signUpSuccess, setSignUpSuccess] = useState(null);
+  const [signInSuccess, setSignInSuccess] = useState(null);
+  const [signOutSuccess, setSignOutSuccess] = useState(null);
+
 
 
 
@@ -47,52 +104,47 @@ function doSignOut() {
     });
 }
 
-  return (
-    <React.Fragment>
-
-
-      <h1>Sign up</h1>
-      <form onSubmit={doSignUp}>
-        <input
-          type='text'
-          name='email'
-          placeholder='email' />
-        <input
-          type='password'
-          name='password'
-          placeholder='Password' />
-        <button type='submit'>Sign up</button>
-      </form>
-
-      
-
-    {/* </React.Fragment> */}
   
-      <h1>Sign In</h1>
-      {/* New sign in success message*/}
-      {signInSuccess}
-      <form onSubmit={doSignIn}>
-        <input
-          type='text'
-          name='signinEmail'
-          placeholder='email' />
-        <input
-          type='password'
-          name='signinPassword'
-          placeholder='Password' />
-        <button type='submit'>Sign in</button>
-      </form>
+return (
+  <StyledSignInContainer>
+    <StyledTitle>Sign up</StyledTitle>
+    <StyledForm onSubmit={doSignUp}>
+      <StyledInput
+        type='text'
+        name='email'
+        placeholder='Email'
+      />
+      <StyledInput
+        type='password'
+        name='password'
+        placeholder='Password'
+      />
+      <StyledButton type='submit'>Sign up</StyledButton>
+    </StyledForm>
 
-      {/* New sign out button*/}
-      <h1>Sign Out</h1>
-      {signOutSuccess}
-      <br />
-      <button onClick={doSignOut}>Sign out</button>
+    {signUpSuccess && <StyledMessage>{signUpSuccess}</StyledMessage>}
 
-    </React.Fragment>
-  );
+    <StyledTitle>Sign In</StyledTitle>
+    {signInSuccess && <StyledMessage>{signInSuccess}</StyledMessage>}
+    <StyledForm onSubmit={doSignIn}>
+      <StyledInput
+        type='text'
+        name='signinEmail'
+        placeholder='Email'
+      />
+      <StyledInput
+        type='password'
+        name='signinPassword'
+        placeholder='Password'
+      />
+      <StyledButton type='submit'>Sign in</StyledButton>
+    </StyledForm>
+
+    <StyledTitle>Sign Out</StyledTitle>
+    {signOutSuccess && <StyledMessage>{signOutSuccess}</StyledMessage>}
+    <StyledButton onClick={doSignOut}>Sign out</StyledButton>
+  </StyledSignInContainer>
+);
 }
 
-
-
-export default SignIn
+export default SignIn;
