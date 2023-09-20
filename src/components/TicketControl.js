@@ -1,14 +1,12 @@
 import React, { useEffect,useState } from "react";
 import { db, auth } from './firebase.js'
-
-
-// import { connect } from "react-redux";
 import NewTicketForm from "./NewTicketForm";
 import TicketList from "./TicketList";
 import EditTicketForm from "./EditTicketForm";
 import TicketDetail from "./TicketDetail";
-// import { collection, addDoc } from "firebase/firestore";
-import { collection, addDoc,doc,updateDoc, onSnapshot,deleteDoc } from "firebase/firestore";
+import { collection, addDoc, doc, updateDoc, onSnapshot, deleteDoc, query, orderBy } from "firebase/firestore";
+import { formatDistanceToNow } from 'date-fns';
+
 
 
 
@@ -20,31 +18,45 @@ function TicketControl() {
 
   const [error, setError] = useState(null);
 
+
+  
   useEffect(() => { 
-    const unSubscribe = onSnapshot(
+    // new code below!
+    const queryByTimestamp = query(
       collection(db, "tickets"), 
-      (collectionSnapshot) => { //parameter represents the response from our database
+      orderBy('timeOpen')
+    );
+    const unSubscribe = onSnapshot(
+      // new code below!
+      queryByTimestamp, 
+      (querySnapshot) => {
         const tickets = [];
-        collectionSnapshot.forEach((doc) => {//calling a QuerySnapshot method
-            tickets.push({
-              names: doc.data().names, 
-              location: doc.data().location, //1.doc accesses the Firestore document, a DocumentSnapshot object.2:data() returns the Firestore document's data into a JavaScript object.3: .names accesses the names key to get its value.
-              issue: doc.data().issue, 
-              id: doc.id
-            });
+        querySnapshot.forEach((doc) => {
+          const timeOpen = doc.get('timeOpen', {serverTimestamps: "estimate"}).toDate();
+          const jsDate = new Date(timeOpen);
+          tickets.push({
+            names: doc.data().names, 
+            location: doc.data().location, 
+            issue: doc.data().issue, 
+            timeOpen: jsDate,
+            formattedWaitTime: formatDistanceToNow(jsDate),
+            id: doc.id
+          });
         });
         setMainTicketList(tickets);
-      }, 
+      },
       (error) => {
         setError(error.message);
-
-        // do something with error
       }
     );
 
     return () => unSubscribe();
   }, []);
 
+
+  formatDistanceToNow(new Date(), {
+    addSuffix: true
+  });
 
   const handleClick = () => {
     if (selectedTicket != null) {
@@ -147,13 +159,5 @@ function TicketControl() {
   );
 }
 }
-// TicketControl.propTypes = {
-//   mainTicketList: PropTypes.object,
-// };
-// const mapStateToProps = (state) => {
-//   return {
-//     mainTicketList: state,
-//   };
-// };
-// TicketControl = connect(mapStateToProps)(TicketControl);
+
 export default TicketControl;
