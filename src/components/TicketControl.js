@@ -1,14 +1,13 @@
-import React, { useState } from "react";
-import { connect } from "react-redux";
+import React, { useEffect,useState } from "react";
+
+// import { connect } from "react-redux";
 import NewTicketForm from "./NewTicketForm";
 import TicketList from "./TicketList";
 import EditTicketForm from "./EditTicketForm";
 import TicketDetail from "./TicketDetail";
-import PropTypes from "prop-types";
 import db from './firebase.js';
-import { collection, addDoc } from "firebase/firestore";
-import { collection, addDoc, onSnapshot } from "firebase/firestore";
-import db from './../firebase.js'
+// import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc,doc,updateDoc, onSnapshot,deleteDoc } from "firebase/firestore";
 
 
 
@@ -18,13 +17,26 @@ function TicketControl() {
   const [selectedTicket, setSelectedTicket] = useState(null);
   const [editing, setEditing] = useState(false);
 
+  const [error, setError] = useState(null);
+
   useEffect(() => { 
     const unSubscribe = onSnapshot(
       collection(db, "tickets"), 
-      (collectionSnapshot) => {
-        // do something with ticket data
+      (collectionSnapshot) => { //parameter represents the response from our database
+        const tickets = [];
+        collectionSnapshot.forEach((doc) => {//calling a QuerySnapshot method
+            tickets.push({
+              names: doc.data().names, 
+              location: doc.data().location, //1.doc accesses the Firestore document, a DocumentSnapshot object.2:data() returns the Firestore document's data into a JavaScript object.3: .names accesses the names key to get its value.
+              issue: doc.data().issue, 
+              id: doc.id
+            });
+        });
+        setMainTicketList(tickets);
       }, 
       (error) => {
+        setError(error.message);
+
         // do something with error
       }
     );
@@ -44,27 +56,20 @@ function TicketControl() {
     }
   };
 
-  const handleDeletingTicket = (id) => {
-    const newMainTicketList = mainTicketList.filter(
-      (ticket) => ticket.id !== id
-    );
-    setMainTicketList(newMainTicketList);
+  const handleDeletingTicket = async (id) => {
+    await deleteDoc(doc(db, "tickets", id));
     setSelectedTicket(null);
-  };
+  }
   const handleEditClick = () => {
     // new code!
     setEditing(true);
   };
-  const handleEditingTicketInList = (ticketToEdit) => {
-    const editedMainTicketList = mainTicketList
-      // new code: selectedTicket.id
-      .filter((ticket) => ticket.id !== selectedTicket.id)
-      .concat(ticketToEdit);
-    setMainTicketList(editedMainTicketList);
-    // new code!
+  const handleEditingTicketInList = async (ticketToEdit) => {
+    const ticketRef = doc(db, "tickets", ticketToEdit.id);
+    await updateDoc(ticketRef, ticketToEdit);
     setEditing(false);
     setSelectedTicket(null);
-  };
+  }
   const handleAddingNewTicketToList = async (newTicketData) => {
     await addDoc(collection(db, "tickets"), newTicketData);
     setFormVisibleOnPage(false);
@@ -81,9 +86,12 @@ function TicketControl() {
   };
   let currentlyVisibleState = null;
   let buttonText = null;
+
+  if (error) {
+    currentlyVisibleState = <p>There was an error: {error}</p>
   // new code: editing
-  if (editing) {
-    currentlyVisibleState = (
+} else if (editing) {      
+  currentlyVisibleState = (
       <EditTicketForm
         // new code: selectedTicket
         ticket={selectedTicket}
@@ -91,6 +99,7 @@ function TicketControl() {
       />
     );
     buttonText = "Return to Ticket List";
+    
     // new code: selectedTicket
   } else if (selectedTicket != null) {
     currentlyVisibleState = (
@@ -119,17 +128,18 @@ function TicketControl() {
   return (
     <React.Fragment>
       {currentlyVisibleState}
-      <button onClick={handleClick}>{buttonText}</button>
+      {/* New code below! */}
+      {error ? null : <button onClick={handleClick}>{buttonText}</button>}
     </React.Fragment>
   );
 }
-TicketControl.propTypes = {
-  mainTicketList: PropTypes.object,
-};
-const mapStateToProps = (state) => {
-  return {
-    mainTicketList: state,
-  };
-};
-TicketControl = connect(mapStateToProps)(TicketControl);
+// TicketControl.propTypes = {
+//   mainTicketList: PropTypes.object,
+// };
+// const mapStateToProps = (state) => {
+//   return {
+//     mainTicketList: state,
+//   };
+// };
+// TicketControl = connect(mapStateToProps)(TicketControl);
 export default TicketControl;
